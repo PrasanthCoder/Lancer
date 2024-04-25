@@ -7,6 +7,7 @@ interface Props {
   url: string;
   userid: string;
 }
+
 export function NavigationEvents(props: Props) {
   const pathname = usePathname();
   const sellerurl = `/dashboard/${props.userid}`;
@@ -17,6 +18,13 @@ export function NavigationEvents(props: Props) {
     if (pathname.startsWith(sellerurl)) {
       return (
         <div className="inline">
+          <Link
+            href={sellerurl}
+            prefetch={false}
+            className="px-2 mx-2 py-1 text-md"
+          >
+            Dashboard
+          </Link>
           <Link
             href={profileurl}
             prefetch={false}

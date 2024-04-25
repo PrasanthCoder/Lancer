@@ -1,10 +1,18 @@
 import mongoose, {Types} from "mongoose";
-import Category, {Categories} from "./Category";
 import Profile, {Profiles} from "./Profile";
 
 export interface Gigs extends mongoose.Document {
   provider: Types.ObjectId | Profiles;
-  category: Types.ObjectId | Categories;
+  category: string;
+  name: string;
+  description: string;
+  thumbnail: string;
+  minprice: number;
+}
+
+export interface GigsPopulate extends mongoose.Document {
+  provider: Profiles;
+  category: string;
   name: string;
   description: string;
   thumbnail: string;
@@ -19,8 +27,7 @@ const GigSchema = new mongoose.Schema<Gigs>({
     required: [true, "profile id is manditory"],
   },
   category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category',
+    type: String,
     required: [true, "Category id is manditory"],
   },
   name: {

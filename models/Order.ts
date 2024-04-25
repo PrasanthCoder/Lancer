@@ -11,7 +11,6 @@ export interface Orders extends mongoose.Document {
   completed_date: Date;
 }
 
-
 const OrderSchema = new mongoose.Schema<Orders>({
   gig_ordered: {
     type: mongoose.Schema.Types.ObjectId,
@@ -29,7 +28,7 @@ const OrderSchema = new mongoose.Schema<Orders>({
   },
   budget: {
     type: Number,
-    required: [true, "Please provide minimum budget of teh gig"],
+    required: [true, "Please provide minimum budget of the gig"],
   },
   deadline: {
     type: Date,

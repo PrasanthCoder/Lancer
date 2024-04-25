@@ -1,12 +1,12 @@
 import Image from "next/image";
-import { GigsPopulate } from "@/models/Gig";
-import { Users } from "@/models/User";
-import Link from "next/link";
+import { UserCircleIcon } from "@heroicons/react/16/solid";
 import { headers } from "next/headers";
-import { UserCircleIcon } from "@heroicons/react/24/solid";
+import { GigsPopulate } from "@/models/Gig";
+import Link from "next/link";
+import { Users } from "@/models/User";
 
-async function getData() {
-  const res = await fetch("http://localhost:3000/api/gigs", {
+async function getGigs(userid: string) {
+  const res = await fetch(`http://localhost:3000/api/gigs?id=${userid}`, {
     cache: "no-store",
     method: "GET",
     headers: headers(),
@@ -22,21 +22,19 @@ async function getData() {
   return res.json();
 }
 
-export default async function ShowGig() {
-  const gigs = await getData();
+export async function MyGigs(props: { userid: string }) {
+  const gigs = await getGigs(props.userid);
   const profiles: Array<Users> = [];
   gigs.forEach((gig: GigsPopulate) => {
     profiles.push(gig.provider.user as Users);
   });
-
   return (
     <div>
       <div className="grid grid-cols-3 gap-4">
         {gigs.map((gig: GigsPopulate, index: number) => (
           <div key={gig._id}>
-           
               <div className="px-8 py-12">
-              <Link href={`${profiles[index].username}/${gig.name.replace(/\s/g, '-')}`}>
+              <Link href={`./${profiles[index].username}/${gig.name.replace(/\s/g, '-')}`}>
                 <div className="mx-auto">
                   <Image
                     width={500}
@@ -52,9 +50,8 @@ export default async function ShowGig() {
                   </p>
                 </blockquote>
                 </Link>
-                <Link href={`${profiles[index].username}`}>
+                <Link href={`./${profiles[index].username}`}>
                 <div className="flex">
-                
                   {gig.provider.profilepic ? (
                     <Image
                       src={`data:image/jpeg;base64,${gig.provider.profilepic}`}
@@ -69,17 +66,15 @@ export default async function ShowGig() {
                       aria-hidden="true"
                     />
                   )}
-                  
                   <div className="my-auto mx-5">
                     <p className="text-base text-gray-600">
                       {profiles[index].fullname}
                     </p>
                   </div>
-                  
                 </div>
                 </Link>
               </div>
-            
+
           </div>
         ))}
       </div>

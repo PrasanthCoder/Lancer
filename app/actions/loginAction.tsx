@@ -9,12 +9,12 @@ export async function LoginAction(prevState: any, userdata: FormData){
     await dbconnect();
     const rawFormData = {
         email: userdata.get('email')?.toString(),
-        password: userdata.get('password')?.toString(),
     }
     const userExist = await User.findOne({email: rawFormData.email});
     
-    if(userExist && userExist.password === rawFormData.password){
+    if(userExist && userExist.password === userdata.get('password')?.toString()){
         userdata.append("id", userExist._id);
+        userdata.append("username", userExist.username);
         await login(userdata);
         redirect("../dashboard");   
     }
