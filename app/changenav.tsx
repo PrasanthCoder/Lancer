@@ -12,7 +12,8 @@ export function NavigationEvents(props: Props) {
   const pathname = usePathname();
   const sellerurl = `/dashboard/${props.userid}`;
   const gigsurl = `/dashboard/${props.userid}/gigs`;
-  const ordersurl = `/dashboard/${props.userid}/orders`;
+  const sellerordersurl = `/dashboard/${props.userid}/orders`;
+  const buyerordersurl = `/orders`;
   const profileurl = `/dashboard/${props.userid}/profile`;
   const getPageTitle = (pathname: string) => {
     if (pathname.startsWith(sellerurl)) {
@@ -40,7 +41,7 @@ export function NavigationEvents(props: Props) {
             Gigs
           </Link>
           <Link
-            href={ordersurl}
+            href={sellerordersurl}
             prefetch={false}
             className="px-2 mx-2 py-1 text-md"
           >
@@ -57,9 +58,18 @@ export function NavigationEvents(props: Props) {
       );
     } else {
       return (
-        <Link href={props.url} className="px-10 py-1 text-md">
-          Switch to Selling
-        </Link>
+        <div className="inline">
+          <Link
+            href={buyerordersurl}
+            prefetch={false}
+            className="px-2 mx-2 py-1 text-md"
+          >
+            Orders
+          </Link>
+          <Link href={`/${props.url}`} className="px-10 py-1 text-md">
+            Switch to Selling
+          </Link>
+        </div>
       );
     }
   };

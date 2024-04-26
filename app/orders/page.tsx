@@ -81,23 +81,6 @@ export default function Page() {
                       {order.status}
                     </p>
                   </div>
-                  {order.status === "pending"? (
-                    <details className="dropdown my-auto mx-4 relative">
-                    <summary className="m-1 btn">Options</summary>
-                    <ul className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52 absolute">
-                      <li>
-                        <form action={updateOrderStatus.bind(null, order._id, "accepted")}>
-                          <button type="submit">Accept</button>
-                        </form>
-                      </li>
-                      <li>
-                        <form action={updateOrderStatus.bind(null, order._id, "rejected")}>
-                          <button type="submit">Reject</button>
-                        </form>
-                      </li>
-                    </ul>
-                  </details>
-                  ):("")}
                   
                 </div>
               </div>
@@ -114,7 +97,7 @@ export default function Page() {
       try {
         const user = await axios.get("http://localhost:3000/api/cookies");
         const response = await axios.get(
-          `http://localhost:3000/api/orders?provider=${user.data}`
+          `http://localhost:3000/api/orders?buyer=${user.data}`
         );
         response.data.forEach((order: OrdersPopulate) => {
           if (order.status === "pending") {
@@ -136,17 +119,17 @@ export default function Page() {
   return (
     <div>
       <h2 className="text-3xl font-bold leading-tight text-gray-800 sm:text-3xl lg:text-4xl ml-10 my-5">
-        New Orders received
+        Your Pending Orders
       </h2>
       {pendingOrders ? orderList(pendingOrders) : ""}
 
       <h2 className="text-3xl font-bold leading-tight text-gray-800 sm:text-3xl lg:text-4xl ml-10 my-5">
-        Accepted Orders
+        Accepted by seller
       </h2>
       {acceptedOrders ? orderList(acceptedOrders) : ""}
 
       <h2 className="text-3xl font-bold leading-tight text-gray-800 sm:text-3xl lg:text-4xl ml-10 my-5">
-        Rejected Orders
+        Rejected by seller
       </h2>
       {rejectedOrders ? orderList(rejectedOrders) : ""}
     </div>

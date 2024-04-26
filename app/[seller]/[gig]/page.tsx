@@ -24,7 +24,6 @@ export default async function Page({ params }: { params: { gig: string } }) {
   console.log("This is params of gigname ", params.gig);
   const gig = await getGig(params.gig);
   const profile = gig.provider;
-  console.log(profile);
   return (
     <div className="flex w-4/5 m-auto">
       <div className="px-8 py-12">

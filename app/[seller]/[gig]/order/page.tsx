@@ -8,6 +8,7 @@ import { Users } from "@/models/User";
 import axios from "axios";
 import Link from "next/link";
 import { UserCircleIcon } from "@heroicons/react/16/solid";
+import {saveOrder} from "@/app/actions/saveOrder";
 
 export default function Page() {
   const today = new Date();
@@ -43,7 +44,6 @@ export default function Page() {
         );
         setGig(response.data);
         setUser(response.data.provider.user);
-        console.log(gig);
       } catch (error) {
         console.log(error);
       }
@@ -92,7 +92,8 @@ export default function Page() {
         <span className="text-3xl text-green-700 mr-4">Mininum price:</span>{" "}
         {gig ? gig.minprice : 0}$
       </p>
-      <form>
+      {gig && user? (
+        <form action={saveOrder.bind(null, gig._id, user?._id)}>
         <div className="space-y-12 mt-6 w-full m-auto">
           <div className="border-b border-gray-900/10 pb-4">
             <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -142,7 +143,7 @@ export default function Page() {
                     name="today"
                     id="today"
                     autoComplete="today"
-                    defaultValue={formattedDate}
+                    value={formattedDate}
                     readOnly
                     className="block w-full pl-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
                   />
@@ -163,6 +164,7 @@ export default function Page() {
                     name="deadlinedays"
                     id="deadlinedays"
                     autoComplete="deadlinedays"
+                    defaultValue="0"
                     onChange={(event) => {
                         HandleDeadline(parseInt(event.target.value));
                     }}
@@ -186,7 +188,7 @@ export default function Page() {
                     id="deadline"
                     autoComplete="deadline"
                     readOnly
-                    defaultValue={Deadline}
+                    value={Deadline}
                     className="block w-full px-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
                   />
                 </div>
@@ -199,7 +201,7 @@ export default function Page() {
           <Link
             type="button"
             className="text-sm font-semibold leading-6 text-gray-900"
-            href="./gigs"
+            href="./"
           >
             Cancel
           </Link>
@@ -211,6 +213,8 @@ export default function Page() {
           </button>
         </div>
       </form>
+      ):("")}
+      
     </div>
   );
 }

@@ -12,7 +12,7 @@ export default async function Header() {
 
   return (
     <div className="p-5 mx-auto bg-white shadow-lg flex items-center space-x-4">
-      <Link href={"/"}>
+      <Link href={"/dashboard"}>
         <svg
           className="mx-auto h-10 w-auto"
           xmlns="http://www.w3.org/2000/svg"
@@ -84,6 +84,7 @@ export default async function Header() {
       </Link>
       <Suspense fallback={null}>
       <div id="navlinks" className="flex space-x-4 justify-end grow">
+          
         {session ? (
           <form
             action={async () => {
@@ -100,9 +101,14 @@ export default async function Header() {
             </button>
           </form>
         ) : (
-          <Link href="./login" className="px-2 py-1 text-md">
+          <div>
+          <Link href="/" className="px-4 py-1 text-md">
+            Home
+          </Link>
+          <Link href="./login" className="px-4 py-1 text-md">
             Sign In
           </Link>
+          </div>
         )}
         {session ? (
           <p></p>

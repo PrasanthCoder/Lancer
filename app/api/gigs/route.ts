@@ -42,7 +42,10 @@ export const GET = async (request: NextRequest) => {
         });
         return new NextResponse(JSON.stringify(gig), { status: 202 });
       } else {
-        const gigs = await Gig.find().populate({
+        const details = JSON.parse(JSON.stringify(session, null, 2));
+        const providerid = details.user.id;
+        const providerprofile = await Profile.findOne({ user: providerid});
+        const gigs = await Gig.find({ provider: { $ne:  providerprofile._id} }).populate({
           path: "provider",
           populate: {
             path: "user",
