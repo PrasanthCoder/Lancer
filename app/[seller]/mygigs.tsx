@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Users } from "@/models/User";
 
 async function getGigs(userid: string) {
-  const res = await fetch(`http://localhost:3000/api/gigs?id=${userid}`, {
+  const res = await fetch(`http://127.0.0.1:3000/api/gigs?id=${userid}`, {
     cache: "no-store",
     method: "GET",
     headers: headers(),
