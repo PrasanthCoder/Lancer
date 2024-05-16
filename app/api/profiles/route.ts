@@ -18,7 +18,7 @@ export const GET = async (request: NextRequest) => {
           "user"
         );
         if (profileid) {
-          return new NextResponse(JSON.stringify(profileid), { status: 200 });
+          return new NextResponse(JSON.stringify(profileid), { status: 200 }); 
         } else {
           return new NextResponse("Profile doesn't exist", { status: 300 });
         }

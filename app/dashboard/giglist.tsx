@@ -9,7 +9,7 @@ async function getData() {
   const res = await fetch("http://localhost:3000/api/gigs", {
     cache: "no-store",
     method: "GET",
-    headers: headers(),
+    headers: new Headers(headers()),
   });
   // The return value is *not* serialized
   // You can return Date, Map, Set, etc.

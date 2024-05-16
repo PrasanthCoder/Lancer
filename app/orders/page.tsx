@@ -7,9 +7,20 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function Page() {
-  const [pendingOrders, setpOrders] = useState<OrdersPopulate[]>([]);
-  const [acceptedOrders, setaOrders] = useState<OrdersPopulate[]>([]);
-  const [rejectedOrders, setrOrders] = useState<OrdersPopulate[]>([]);
+  const [orders, setOrders] = useState<OrdersPopulate[]>([]);
+  const pendingOrders: OrdersPopulate[] = [];
+  const acceptedOrders: OrdersPopulate[] = [];
+  const rejectedOrders: OrdersPopulate[] = [];
+
+  orders.forEach((order: OrdersPopulate) => {
+    if (order.status === "pending") {
+     pendingOrders.push(order);
+    } else if (order.status === "accepted") {
+      acceptedOrders.push(order);
+    } else {
+      rejectedOrders.push(order);
+    }
+  });
 
   function DatetoString(inputDate: Date) {
     const date = new Date(inputDate);
@@ -99,16 +110,8 @@ export default function Page() {
         const response = await axios.get(
           `http://localhost:3000/api/orders?buyer=${user.data}`
         );
-        response.data.forEach((order: OrdersPopulate) => {
-          if (order.status === "pending") {
-            setpOrders([...pendingOrders, order]);
-          } else if (order.status === "accepted") {
-            setaOrders([...acceptedOrders, order]);
-          } else {
-            setrOrders([...rejectedOrders, order]);
-          }
-        });
-        console.log(pendingOrders);
+        setOrders(response.data);
+        
       } catch (error) {
         console.log(error);
       }
@@ -116,6 +119,12 @@ export default function Page() {
     fetchData();
   }, []);
 
+  useEffect(()=>{
+    /*
+    Query logic
+    */
+    console.log('i fire once');
+},[]);
   return (
     <div>
       <h2 className="text-3xl font-bold leading-tight text-gray-800 sm:text-3xl lg:text-4xl ml-10 my-5">
