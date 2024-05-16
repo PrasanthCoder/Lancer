@@ -2,6 +2,8 @@ import { NextResponse, NextRequest } from "next/server";
 import dbconnect from "@/lib/bdconnect";
 import Order from "@/models/Order";
 import { getSession } from "@/lib/auth";
+import User, {Users} from "@/models/User";
+import Gig, {Gigs} from "@/models/Gig";
 import { ALL } from "dns";
 
 export const GET = async (request: NextRequest) => {

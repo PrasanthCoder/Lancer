@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import dbconnect from "@/lib/bdconnect";
 import Gig from "@/models/Gig";
 import Profile from "@/models/Profile";
+import User, {Users} from "@/models/User";
 import { getSession } from "@/lib/auth";
 
 export const GET = async (request: NextRequest) => {
