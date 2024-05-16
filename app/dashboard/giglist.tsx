@@ -1,34 +1,30 @@
+'use client'
 import Image from "next/image";
 import { GigsPopulate } from "@/models/Gig";
 import { Users } from "@/models/User";
 import Link from "next/link";
-import { headers } from "next/headers";
+import axios from "axios";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
+import { useState, useEffect } from "react";
 
-async function getData() {
-  const res = await fetch("http://localhost:3000/api/gigs", {
-    cache: "no-store",
-    method: "GET",
-    headers: new Headers(headers()),
-  });
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
-
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
-  }
-
-  return res.json();
-}
-
-export default async function ShowGig() {
-  const gigs = await getData();
+export default function ShowGig() {
+  const [gigs, setGigs] = useState<GigsPopulate[]>([]);
   const profiles: Array<Users> = [];
   gigs.forEach((gig: GigsPopulate) => {
     profiles.push(gig.provider.user as Users);
   });
-
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const user = await axios.get("/api/gigs");
+        setGigs(user.data);
+        
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
   return (
     <div>
       <div className="grid grid-cols-3 gap-4">
