@@ -1,11 +1,13 @@
 import { NextResponse, NextRequest } from "next/server";
 import dbconnect from "@/lib/bdconnect";
+import mongoose from "mongoose";
 import Gig from "@/models/Gig";
 import Profile from "@/models/Profile";
-import User, {Users} from "@/models/User";
+import {Users} from "@/models/User";
 import { getSession } from "@/lib/auth";
 
 export const GET = async (request: NextRequest) => {
+  const usermodel = mongoose.model<Users>("User");
   const session = await getSession();
   const searchParams = request.nextUrl.searchParams;
   const userid = searchParams.get("id");
