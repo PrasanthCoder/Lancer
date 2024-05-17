@@ -1,13 +1,10 @@
 import { NextResponse, NextRequest } from "next/server";
 import dbconnect from "@/lib/bdconnect";
-import mongoose from "mongoose";
 import Gig from "@/models/Gig";
 import Profile from "@/models/Profile";
-import {Users} from "@/models/User";
 import { getSession } from "@/lib/auth";
 
 export const GET = async (request: NextRequest) => {
-  const usermodel = mongoose.model<Users>("User");
   const session = await getSession();
   const searchParams = request.nextUrl.searchParams;
   const userid = searchParams.get("id");
@@ -24,7 +21,7 @@ export const GET = async (request: NextRequest) => {
             path: "user",
             model: "User",
           },
-        });
+        }).exec();
         return new NextResponse(JSON.stringify(gigs), { status: 200 });
       } else if (gigid) {
         const gig = await Gig.findOne({ _id: gigid }).populate({

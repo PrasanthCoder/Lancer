@@ -16,9 +16,8 @@ export default function ShowGig() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const user = await axios.get("/api/gigs");
-        setGigs(user.data);
-        
+        const giglist = await axios.get("/api/gigs");
+        setGigs(giglist.data);
       } catch (error) {
         console.log(error);
       }

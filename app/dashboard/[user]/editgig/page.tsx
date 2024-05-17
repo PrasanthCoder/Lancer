@@ -1,5 +1,4 @@
 import { UserCircleIcon } from "@heroicons/react/24/solid";
-import { headers } from "next/headers";
 import Image from "next/image";
 import dbconnect from "@/lib/bdconnect";
 import Gig from "@/models/Gig";
@@ -8,55 +7,61 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/auth";
 
-async function getGig(gigid: string) {
-  const res = await fetch(`http://localhost:3000/api/gigs?gigid=${gigid}`, {
-    cache: "no-store",
-    method: "GET",
-    headers: headers(),
-  });
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
-
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
-  }
-
-  return res.json();
-}
-
 export default async function Page({
   searchParams,
 }: {
   searchParams: { gigid: string };
 }) {
-  const gig = searchParams.gigid ? await getGig(searchParams.gigid) : {};
+  const gigres = searchParams.gigid
+    ? await Gig.findOne({ _id: searchParams.gigid }).populate({
+        path: "provider",
+        populate: {
+          path: "user",
+          model: "User",
+        },
+      })
+    : {};
+
+  const gigstr = JSON.stringify(gigres);
+  const gig = JSON.parse(gigstr);
 
   async function editGigAction(formData: FormData) {
     "use server";
-
+    console.log("step1");
     const session = await getSession();
     const details = JSON.parse(JSON.stringify(session, null, 2));
     const profile = await Profile.findOne({ user: details.user.id });
-
+    
     const image: File | null = formData.get("thumbnail") as unknown as File;
     if (!File) {
       throw new Error("no file uploaded");
     }
-
+    console.log("step2");
+    
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const gigData = {
+
+    const gigData = bytes.byteLength? {
       name: formData.get("gigname"),
       provider: profile._id,
       description: formData.get("description"),
       category: formData.get("category"),
       minprice: formData.get("min-price"),
-      thumbnail: bytes.byteLength ? buffer : gig.thumbnail,
-    };
+      thumbnail: buffer
+    } : {
+      name: formData.get("gigname"),
+      provider: profile._id,
+      description: formData.get("description"),
+      category: formData.get("category"),
+      minprice: formData.get("min-price"),
+    }
+    
     await dbconnect();
-
+    console.log("step3");
+    
     if (gig._id) {
+      console.log("I am in updation block");
+      
       Gig.findOneAndUpdate(
         { _id: gig._id }, // Filter criteria
         gigData, // Update data
@@ -79,17 +84,19 @@ export default async function Page({
         { _id: newgig._id },
         { thumbnail: bytes.byteLength ? buffer : newgig.thumbnail },
         { new: true }
-      ) .then((updatedDocument) => {
-        if (updatedDocument) {
-          console.log("gig updated successfully:");
-        } else {
-          console.log("Document not found");
-        }
-      })
-      .catch((error) => {
-        console.error("Error updating document:", error);
-      });;
+      )
+        .then((updatedDocument) => {
+          if (updatedDocument) {
+            console.log("gig updated successfully:");
+          } else {
+            console.log("Document not found");
+          }
+        })
+        .catch((error) => {
+          console.error("Error updating document:", error);
+        });
     }
+    
     redirect("./gigs");
   }
 
@@ -98,7 +105,7 @@ export default async function Page({
       <div className="space-y-12 mt-6 w-4/5 m-auto">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">
-            {searchParams.gigid? "Edit your Gig" : "Enter your Gig details!"}
+            {searchParams.gigid ? "Edit your Gig" : "Enter your Gig details!"}
           </h2>
           <p className="mt-1 text-sm leading-6 text-gray-600">
             This information will be displayed publicly so be careful what you

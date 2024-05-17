@@ -123,9 +123,9 @@ export default function Page() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const user = await axios.get("http://localhost:3000/api/cookies");
+        const user = await axios.get("/api/cookies");
         const response = await axios.get(
-          `http://localhost:3000/api/orders?provider=${user.data}`
+          `/api/orders?provider=${user.data}`
         );
         setOrders(response.data);
       } catch (error) {

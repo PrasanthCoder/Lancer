@@ -1,23 +1,18 @@
 import { UserCircleIcon } from "@heroicons/react/16/solid";
-import { headers } from "next/headers";
+import Gig from "@/models/Gig";
 import Image from "next/image";
 import Link from "next/link";
 
 async function getGig(gigname: string) {
-  const res = await fetch(`http://localhost:3000/api/gigs?name=${gigname}`, {
-    cache: "no-store",
-    method: "GET",
-    headers: headers(),
+  const gig = await Gig.findOne({ name: gigname.replace(/-/g, ' ') }).populate({
+    path: "provider",
+    populate: {
+      path: "user",
+      model: "User",
+    },
   });
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
-
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
-  }
-
-  return res.json();
+  const gigstr = JSON.stringify(gig);
+  return JSON.parse(gigstr);
 }
 
 export default async function Page({ params }: { params: { gig: string } }) {

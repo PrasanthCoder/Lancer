@@ -15,11 +15,13 @@ export interface Profiles extends mongoose.Document {
   languages: string[];
 }
 
+export type NullableProfiles = Profiles | null;
+
 /* ProfileSchema will correspond to a collection in your MongoDB database. */
 const ProfileSchema = new mongoose.Schema<Profiles>({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: User.modelName,
     required: [true, "user id is manditory"],
   },
   rating: {

@@ -1,5 +1,5 @@
 import mongoose, {Types} from "mongoose";
-import category, {Categories} from "./Category";
+import Category, {Categories} from "./Category";
 
 export interface Skills extends mongoose.Document {
   category: Types.ObjectId | Categories;
@@ -11,7 +11,7 @@ export interface Skills extends mongoose.Document {
 const SkillSchema = new mongoose.Schema<Skills>({
   category: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category',
+    ref: Category.modelName,
     required: [true, "category id is manditory"],
   },
   name: {

@@ -65,7 +65,7 @@ export default function Page() {
           <span className="text-3xl text-green-700 mr-4 font-bold">
             Provider:
           </span>
-          {gig.provider.profilepic ? (
+          {gig.provider && gig.provider.profilepic ? (
             <Image
               src={`data:image/jpeg;base64,${gig.provider.profilepic}`}
               width={80}

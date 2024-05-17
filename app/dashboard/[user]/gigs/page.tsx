@@ -14,9 +14,9 @@ export default function Page() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const user = await axios.get("http://localhost:3000/api/cookies");
+        const user = await axios.get("/api/cookies");
         const response = await axios.get(
-          `http://localhost:3000/api/gigs?id=${user.data}`
+          `/api/gigs?id=${user.data}`
         );
         setGigs(response.data);
       } catch (error) {

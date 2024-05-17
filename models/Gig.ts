@@ -19,11 +19,13 @@ export interface GigsPopulate extends mongoose.Document {
   minprice: number;
 }
 
+export type NullableGigs = GigsPopulate | null;
+
 
 const GigSchema = new mongoose.Schema<Gigs>({
   provider: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Profile',
+    ref: Profile.modelName,
     required: [true, "profile id is manditory"],
   },
   category: {
@@ -42,7 +44,7 @@ const GigSchema = new mongoose.Schema<Gigs>({
   },
   thumbnail: {
     data: Buffer, // Storing image data as a Buffer
-    contentType: String // Storing content type (e.g., 'image/jpeg', 'image/png')
+    contentType: Object // Storing content type (e.g., 'image/jpeg', 'image/png')
   },
   minprice: {
     type: Number,

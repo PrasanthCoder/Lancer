@@ -1,49 +1,18 @@
 import { UserCircleIcon } from "@heroicons/react/24/solid";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth";
 import Image from "next/image";
 import dbconnect from "@/lib/bdconnect";
-import User from "@/models/User";
-import Profile, {Profiles} from "@/models/Profile";
+import User, { Users } from "@/models/User";
+import Profile, { Profiles } from "@/models/Profile";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
-async function getProfile() {
-  const res = await fetch("http://localhost:3000/api/profiles", {
-    cache: "no-store",
-    method: "GET",
-    headers: headers(),
-  });
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
-
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
-  }
-
-  return res.json();
-}
-
-async function getUser() {
-  const res = await fetch("http://localhost:3000/api/users", {
-    cache: "no-store",
-    method: "GET",
-    headers: headers(),
-  });
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
-
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
-  }
-
-  return res.json();
-}
-
 export default async function Page() {
-  const profile: Profiles = await getProfile();
-  const user = await getUser();
+  const session = await getSession();
+  const details = JSON.parse(JSON.stringify(session, null, 2));
+  const userid = details.user.id;
+  const profile = await Profile.findOne({ user: userid }).populate("user");
+  const user = await User.findOne({ _id: userid });
 
   async function editProfileAction(formData: FormData) {
     "use server";
@@ -60,22 +29,24 @@ export default async function Page() {
       fullname: formData.get("fullname"),
       username: formData.get("username"),
     };
-    
-    const profileData = bytes.byteLength? {
-      description: formData.get("description"),
-      country: formData.get("country"),
-      city: formData.get("city"),
-      state: formData.get("state"),
-      zip: formData.get("zip"),
-      profilepic: buffer
-    } : {
-      description: formData.get("description"),
-      country: formData.get("country"),
-      city: formData.get("city"),
-      state: formData.get("state"),
-      zip: formData.get("zip"),
-    };
-    
+
+    const profileData = bytes.byteLength
+      ? {
+          description: formData.get("description"),
+          country: formData.get("country"),
+          city: formData.get("city"),
+          state: formData.get("state"),
+          zip: formData.get("zip"),
+          profilepic: buffer,
+        }
+      : {
+          description: formData.get("description"),
+          country: formData.get("country"),
+          city: formData.get("city"),
+          state: formData.get("state"),
+          zip: formData.get("zip"),
+        };
+
     await dbconnect();
 
     User.findOneAndUpdate(

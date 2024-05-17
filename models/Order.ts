@@ -1,6 +1,6 @@
 import mongoose, {Types} from "mongoose";
-import {Gigs} from "./Gig";
-import { Users} from "./User";
+import Gig, {Gigs} from "./Gig";
+import User, { Users} from "./User";
 
 enum EStatusType {
   Pending = 'pending',
@@ -36,17 +36,17 @@ export interface OrdersPopulate extends mongoose.Document {
 const OrderSchema = new mongoose.Schema<Orders>({
   gig_ordered: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Gig',
+    ref: Gig.modelName,
     required: [true, "gig id is manditory"],
   },
   buyer: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: User.modelName,
     required: [true, "buyer id is manditory"],
   },
   provider: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: User.modelName,
     required: [true, "provider is manditaory"],
   },
   accepted_date: {

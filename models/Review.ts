@@ -14,12 +14,12 @@ export interface Reviews extends mongoose.Document {
 const ReviewSchema = new mongoose.Schema<Reviews>({
   gig_reviewed: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Gig',
+    ref: Gig.modelName,
     required: [true, "Gig id is manditory"],
   },
   reviewed_by: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: User.modelName,
     required: [true, "user id is manditory"],
   },
   name: {

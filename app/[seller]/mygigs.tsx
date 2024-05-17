@@ -1,29 +1,31 @@
 import Image from "next/image";
 import { UserCircleIcon } from "@heroicons/react/16/solid";
 import { headers } from "next/headers";
-import { GigsPopulate } from "@/models/Gig";
+import Gig, { GigsPopulate } from "@/models/Gig";
 import Link from "next/link";
 import { Users } from "@/models/User";
+import Profile, { NullableProfiles } from "@/models/Profile";
 
-async function getGigs(userid: string) {
-  const res = await fetch(`http://localhost:3000/api/gigs?id=${userid}`, {
-    cache: "no-store",
-    method: "GET",
-    headers: headers(),
-  });
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
-
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
+async function getGigs(userid: string): Promise<GigsPopulate[]> {
+  const profile: NullableProfiles = await Profile.findOne({ user: userid });
+  if (profile) {
+    const gigs: GigsPopulate[] = await Gig.find({
+      provider: profile._id,
+    }).populate({
+      path: "provider",
+      populate: {
+        path: "user",
+        model: "User",
+      },
+    });
+    const restr = JSON.stringify(gigs);
+    return JSON.parse(restr);
   }
-
-  return res.json();
+  return [];
 }
 
 export async function MyGigs(props: { userid: string }) {
-  const gigs = await getGigs(props.userid);
+  const gigs: GigsPopulate[] = await getGigs(props.userid);
   const profiles: Array<Users> = [];
   gigs.forEach((gig: GigsPopulate) => {
     profiles.push(gig.provider.user as Users);
@@ -33,14 +35,19 @@ export async function MyGigs(props: { userid: string }) {
       <div className="grid grid-cols-3 gap-4">
         {gigs.map((gig: GigsPopulate, index: number) => (
           <div key={gig._id}>
-              <div className="px-8 py-12">
-              <Link href={`./${profiles[index].username}/${gig.name.replace(/\s/g, '-')}`}>
+            <div className="px-8 py-12">
+              <Link
+                href={`./${profiles[index].username}/${gig.name.replace(
+                  /\s/g,
+                  "-"
+                )}`}
+              >
                 <div className="mx-auto">
                   <Image
                     width={500}
                     height={500}
                     className="w-full h-60 rounded-lg mx-auto"
-                    src={`data:image/jpeg;base64,${gig.thumbnail}`}
+                    src={`data:image/webp;base64,${gig.thumbnail}`}
                     alt="This is a gig image"
                   />
                 </div>
@@ -49,12 +56,12 @@ export async function MyGigs(props: { userid: string }) {
                     {gig.name}
                   </p>
                 </blockquote>
-                </Link>
-                <Link href={`./${profiles[index].username}`}>
+              </Link>
+              <Link href={`./${profiles[index].username}`}>
                 <div className="flex">
                   {gig.provider.profilepic ? (
                     <Image
-                      src={`data:image/jpeg;base64,${gig.provider.profilepic}`}
+                      src={`data:image/webp;base64,${gig.provider.profilepic}`}
                       width={80}
                       height={80}
                       alt="Profile Picture"
@@ -72,9 +79,8 @@ export async function MyGigs(props: { userid: string }) {
                     </p>
                   </div>
                 </div>
-                </Link>
-              </div>
-
+              </Link>
+            </div>
           </div>
         ))}
       </div>
