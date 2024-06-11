@@ -7,7 +7,7 @@ export const GET = async (request: NextRequest) => {
     try {
       const details = JSON.parse(JSON.stringify(session, null, 2));
       const userid = details.user.id;
-      return new NextResponse(userid, { status: 200 });
+      return new NextResponse(JSON.stringify(userid), { status: 200 });
     } catch (error) {
       return new NextResponse("Error in fetching users " + error, {
         status: 500,

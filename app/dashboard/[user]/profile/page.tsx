@@ -1,27 +1,15 @@
 import Link from "next/link";
-import { headers } from "next/headers";
 import Image from "next/image";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
-
-async function getProfile() {
-  const res = await fetch("http://localhost:3000/api/profiles", {
-    cache: "no-store",
-    method: "GET",
-    headers: headers(),
-  });
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
-
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch profile");
-  }
-
-  return res.json();
-}
+import Profile from "@/models/Profile";
+import { getSession } from "@/lib/auth";
 
 export default async function Page() {
-  const profile = await getProfile();
+  const session = await getSession();
+  const details = JSON.parse(JSON.stringify(session, null, 2));
+  const userid = details.user.id;
+  const profileres = await Profile.findOne({ user: userid }).populate("user");
+  const profile = JSON.parse(JSON.stringify(profileres));
   return (
     <div className="bg-gray-50 p-5">
       <div className="max-w-lg mx-auto my-10 bg-white rounded-lg shadow-md p-5">
@@ -42,40 +30,41 @@ export default async function Page() {
         <h2 className="text-center text-2xl font-semibold mt-3">
           {profile.user.fullname}
         </h2>
-        <p className="text-center text-gray-600 mt-1">{profile.user.username}</p>
+        <p className="text-center text-gray-600 mt-1">
+          {profile.user.username}
+        </p>
         <div className="mt-5">
           <h3 className="text-xl font-semibold">About</h3>
-          {profile.description?(
+          {profile.description ? (
             <p className="text-gray-600 mt-2">{profile.description}</p>
-          ):(
+          ) : (
             <p className="text-gray-600 mt-2">Nil</p>
           )}
-          
         </div>
         <div className="mt-5">
           <h3 className="text-xl font-semibold">Address</h3>
         </div>
         <div className="flex items-center gap-x-4 mt-5">
           <h3 className="text-md font-semibold">Country:</h3>
-          {profile.country?(
+          {profile.country ? (
             <p className="text-gray-600">{profile.country}</p>
-          ):(
+          ) : (
             <p className="text-gray-600">Nil</p>
           )}
         </div>
         <div className="flex items-center gap-x-4 mt-5">
           <h3 className="text-md font-semibold">State:</h3>
-          {profile.state?(
+          {profile.state ? (
             <p className="text-gray-600">{profile.state}</p>
-          ):(
+          ) : (
             <p className="text-gray-600">Nil</p>
           )}
         </div>
         <div className="flex items-center gap-x-4 mt-5">
           <h3 className="text-md font-semibold">City:</h3>
-          {profile.city?(
+          {profile.city ? (
             <p className="text-gray-600">{profile.city}</p>
-          ):(
+          ) : (
             <p className="text-gray-600">Nil</p>
           )}
         </div>

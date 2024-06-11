@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { OrdersPopulate } from "@/models/Order";
-import { updateOrderStatus } from "@/app/actions/updateStatus";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -106,9 +105,9 @@ export default function Page() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const user = await axios.get("http://localhost:3000/api/cookies");
+        const user = await axios.get("/api/cookies");
         const response = await axios.get(
-          `http://localhost:3000/api/orders?buyer=${user.data}`
+          `/api/orders?buyer=${user.data}`
         );
         setOrders(response.data);
         
@@ -119,12 +118,6 @@ export default function Page() {
     fetchData();
   }, []);
 
-  useEffect(()=>{
-    /*
-    Query logic
-    */
-    console.log('i fire once');
-},[]);
   return (
     <div>
       <h2 className="text-3xl font-bold leading-tight text-gray-800 sm:text-3xl lg:text-4xl ml-10 my-5">
